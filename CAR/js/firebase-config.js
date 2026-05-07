@@ -1,16 +1,15 @@
-// IMPORTANT: Replace these with your actual Firebase Project Config!
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDxPLNj-4c0DuHnJDxj2V9KRQtNVW1DKn0",
+  authDomain: "cars-38576.firebaseapp.com",
+  projectId: "cars-38576",
+  storageBucket: "cars-38576.firebasestorage.app",
+  messagingSenderId: "513751416718",
+  appId: "1:513751416718:web:0e5f94b3b087b0da966edf",
+  measurementId: "G-3DXMXK495Q"
 };
 
-// Initialize Firebase
+// Initialize Firebase (Using Compat SDK so it works seamlessly with our existing auth scripts)
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-
-// Note: To make Google Login work, you must enable Google Auth in your Firebase Console.
