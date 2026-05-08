@@ -1,0 +1,7 @@
+# Standard Library modules only
+# Tkinter is included with Python standard library.
+# SQLite3 is included with Python standard library.
+# CSV and datetime are included with Python standard library.
+
+# This project uses built-in Python modules. No external PyPI packages are strictly required.
+# However, you need Python 3.10+ installed on your system.

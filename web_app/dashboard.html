@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Rental - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="dashboard-body">
+    
+    <nav class="sidebar">
+        <div class="logo">
+            <h2>🚗 CRS Admin</h2>
+        </div>
+        <ul class="nav-links">
+            <li class="active"><a href="#dashboard">📊 Dashboard</a></li>
+            <li><a href="#cars">🚙 Cars</a></li>
+            <li><a href="#customers">👥 Customers</a></li>
+            <li><a href="#rentals">📅 Rentals</a></li>
+        </ul>
+        <div class="user-info">
+            <img id="user-pfp" src="https://via.placeholder.com/40" alt="Profile">
+            <div class="user-details">
+                <span id="user-name">Loading...</span>
+                <button id="logout-btn" class="btn text-btn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <h1>Dashboard Overview</h1>
+            <div class="date-time" id="clock">Loading time...</div>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card success">
+                <div class="icon">🚗</div>
+                <div class="info">
+                    <h3>Available</h3>
+                    <p id="stat-available">0</p>
+                </div>
+            </div>
+            <div class="stat-card warning">
+                <div class="icon">🔑</div>
+                <div class="info">
+                    <h3>Rented</h3>
+                    <p id="stat-rented">0</p>
+                </div>
+            </div>
+            <div class="stat-card accent">
+                <div class="icon">👥</div>
+                <div class="info">
+                    <h3>Customers</h3>
+                    <p id="stat-customers">0</p>
+                </div>
+            </div>
+            <div class="stat-card gold">
+                <div class="icon">💰</div>
+                <div class="info">
+                    <h3>Revenue</h3>
+                    <p id="stat-revenue">₹0</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Recent Rentals</h2>
+                    <button class="btn secondary-btn">+ New Rental</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Car</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-rentals-body">
+                            <tr><td colspan="5" style="text-align: center;">Loading data from Firebase...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
