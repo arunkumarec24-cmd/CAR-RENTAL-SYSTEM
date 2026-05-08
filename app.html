@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Velox Rentals — Premium Car Hire</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0b; --deep: #111114; --card: #16161a;
+    --border: #2a2a32; --gold: #c9a84c; --gold-light: #e2c97e;
+    --cream: #f5efe6; --muted: #6b6b78; --text: #e8e4de;
+    --red: #c0392b; --green: #27ae60;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--black); color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 15px;
+    min-height: 100vh; overflow-x: hidden;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: .5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,11,.92); backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 36px; height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 700; letter-spacing: .06em;
+    color: var(--gold); text-transform: uppercase;
+  }
+  .nav-logo span { color: var(--text); font-weight: 300; }
+  .nav-center { display: flex; gap: 6px; }
+  .nav-tab {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: .04em;
+    padding: 8px 16px; border-radius: 6px;
+    transition: all .2s; text-transform: uppercase;
+  }
+  .nav-tab:hover { color: var(--text); background: rgba(255,255,255,.04); }
+  .nav-tab.active { color: var(--gold); background: rgba(201,168,76,.08); }
+
+  /* User Menu */
+  .nav-user { display: flex; align-items: center; gap: 12px; }
+  .user-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--gold); overflow: hidden;
+    background: rgba(201,168,76,.15); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; color: var(--gold);
+    transition: border-color .2s; flex-shrink: 0;
+  }
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-avatar:hover { border-color: var(--gold-light); }
+  .user-name { font-size: 13px; color: var(--text); font-weight: 500; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .btn-signout {
+    background: none; border: 1px solid var(--border);
+    border-radius: 8px; color: var(--muted); cursor: pointer;
+    font-family: 'DM Sans'; font-size: 11px; font-weight: 500;
+    letter-spacing: .06em; padding: 6px 12px; text-transform: uppercase;
+    transition: all .2s;
+  }
+  .btn-signout:hover { border-color: var(--red); color: #e74c3c; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; overflow: hidden;
+    padding: 100px 36px 80px;
+    background: linear-gradient(135deg, #0a0a0b 0%, #13131a 50%, #0a0a0b 100%);
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 60% 70% at 70% 50%, rgba(201,168,76,.06) 0%, transparent 70%);
+  }
+  .hero-content { position: relative; max-width: 560px; }
+  .hero-eyebrow {
+    font-family: 'DM Sans'; font-size: 11px; font-weight: 500;
+    letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(44px, 6vw, 72px); font-weight: 300; line-height: 1.08;
+    color: var(--cream); margin-bottom: 20px;
+  }
+  .hero-title em { font-style: italic; color: var(--gold-light); }
+  .hero-sub { color: var(--muted); font-size: 15px; line-height: 1.7; max-width: 420px; }
+
+  /* ── BOOKING STRIP ── */
+  .booking-strip {
+    background: var(--card); border: 1px solid var(--border);
+    margin: 32px 36px; border-radius: 14px; padding: 28px 32px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 20px; align-items: end;
+    position: relative; z-index: 1;
+  }
+  .field-group { display: flex; flex-direction: column; gap: 8px; }
+  .field-label {
+    font-size: 10px; font-weight: 500; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .field-input {
+    background: rgba(255,255,255,.04); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: 'DM Sans';
+    font-size: 14px; padding: 12px 14px; width: 100%;
+    transition: border-color .2s, background .2s; outline: none;
+  }
+  .field-input:focus { border-color: var(--gold); background: rgba(201,168,76,.04); }
+  select.field-input { cursor: pointer; }
+  option { background: var(--card); }
+  .btn-search {
+    background: var(--gold); color: var(--black);
+    border: none; border-radius: 8px; cursor: pointer;
+    font-family: 'DM Sans'; font-size: 13px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: 13px 28px; white-space: nowrap;
+    transition: background .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 4px 20px rgba(201,168,76,.25);
+  }
+  .btn-search:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ── PAGE SECTIONS ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── FLEET GRID ── */
+  .section-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 0 36px; margin-bottom: 24px;
+  }
+  .section-title { font-family: 'Cormorant Garamond'; font-size: 32px; font-weight: 300; color: var(--cream); }
+  .section-count { color: var(--muted); font-size: 13px; }
+  .filter-bar { display: flex; gap: 8px; padding: 0 36px; margin-bottom: 28px; flex-wrap: wrap; }
+  .filter-btn {
+    background: none; border: 1px solid var(--border); border-radius: 20px;
+    color: var(--muted); cursor: pointer; font-family: 'DM Sans';
+    font-size: 12px; font-weight: 500; letter-spacing: .04em;
+    padding: 7px 16px; text-transform: uppercase; transition: all .2s;
+  }
+  .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .filter-btn.active { background: var(--gold); border-color: var(--gold); color: var(--black); }
+  .fleet-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px; padding: 0 36px 60px;
+  }
+  .car-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; cursor: pointer;
+    transition: border-color .25s, transform .25s, box-shadow .25s; position: relative;
+  }
+  .car-card:hover {
+    border-color: rgba(201,168,76,.4); transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 0 1px rgba(201,168,76,.1);
+  }
+  .car-badge {
+    position: absolute; top: 14px; right: 14px;
+    background: var(--gold); color: var(--black);
+    font-size: 10px; font-weight: 600; letter-spacing: .1em;
+    padding: 4px 10px; border-radius: 20px; text-transform: uppercase; z-index: 2;
+  }
+  .car-badge.premium { background: #7c5cbf; color: #fff; }
+  .car-badge.eco { background: var(--green); color: #fff; }
+  .car-img-wrap {
+    background: linear-gradient(135deg, #1a1a20 0%, #111115 100%);
+    height: 180px; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .car-img-wrap::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+    background: linear-gradient(transparent, var(--card));
+  }
+  .car-icon { font-size: 70px; filter: drop-shadow(0 8px 24px rgba(0,0,0,.5)); }
+  .car-info { padding: 18px 20px 20px; }
+  .car-brand { font-size: 11px; font-weight: 500; letter-spacing: .12em; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
+  .car-name { font-family: 'Cormorant Garamond'; font-size: 22px; font-weight: 600; color: var(--cream); margin-bottom: 12px; }
+  .car-specs { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .car-spec { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+  .car-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border); }
+  .car-price { font-family: 'Cormorant Garamond'; font-size: 26px; font-weight: 600; color: var(--gold-light); }
+  .car-price span { font-family: 'DM Sans'; font-size: 12px; color: var(--muted); font-weight: 400; }
+  .btn-rent {
+    background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.3);
+    border-radius: 8px; color: var(--gold); cursor: pointer;
+    font-family: 'DM Sans'; font-size: 12px; font-weight: 600;
+    letter-spacing: .06em; padding: 9px 18px; text-transform: uppercase; transition: all .2s;
+  }
+  .btn-rent:hover { background: var(--gold); color: var(--black); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.75); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; width: 100%; max-width: 520px;
+    max-height: 90vh; overflow-y: auto;
+    animation: modalIn .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes modalIn { from { opacity: 0; transform: scale(.92) translateY(20px); } to { opacity: 1; transform: none; } }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 28px; border-bottom: 1px solid var(--border);
+  }
+  .modal-title { font-family: 'Cormorant Garamond'; font-size: 26px; font-weight: 600; color: var(--cream); }
+  .modal-close {
+    background: rgba(255,255,255,.06); border: none; border-radius: 8px;
+    color: var(--muted); cursor: pointer; font-size: 18px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center; transition: all .2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,.1); color: var(--text); }
+  .modal-body { padding: 28px; }
+  .modal-car-summary {
+    background: rgba(255,255,255,.03); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+  }
+  .modal-car-icon { font-size: 40px; }
+  .modal-car-name { font-family: 'Cormorant Garamond'; font-size: 20px; color: var(--cream); }
+  .modal-car-sub { color: var(--muted); font-size: 13px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .form-row.full { grid-template-columns: 1fr; }
+  .modal-footer { padding: 20px 28px; border-top: 1px solid var(--border); }
+  .price-breakdown { margin-bottom: 20px; }
+  .price-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; color: var(--muted); }
+  .price-row.total { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 6px; color: var(--text); font-weight: 500; font-size: 15px; }
+  .price-row.total .val { color: var(--gold); font-family: 'Cormorant Garamond'; font-size: 22px; }
+  .btn-confirm {
+    width: 100%; background: var(--gold); color: var(--black);
+    border: none; border-radius: 10px; cursor: pointer;
+    font-family: 'DM Sans'; font-size: 14px; font-weight: 600;
+    letter-spacing: .06em; padding: 16px; text-transform: uppercase;
+    transition: all .2s; box-shadow: 0 4px 20px rgba(201,168,76,.3);
+  }
+  .btn-confirm:hover { background: var(--gold-light); }
+  .btn-confirm:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+
+  /* ── BOOKINGS PAGE ── */
+  .bookings-wrap { padding: 0 36px 60px; }
+  .empty-state { text-align: center; padding: 80px 20px; }
+  .empty-icon { font-size: 56px; margin-bottom: 20px; opacity: .5; }
+  .empty-title { font-family: 'Cormorant Garamond'; font-size: 28px; color: var(--cream); margin-bottom: 10px; }
+  .empty-sub { color: var(--muted); font-size: 14px; }
+  .booking-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px 28px; margin-bottom: 16px;
+    display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center;
+    transition: border-color .2s;
+  }
+  .booking-card:hover { border-color: rgba(201,168,76,.2); }
+  .booking-icon { font-size: 36px; }
+  .booking-name { font-family: 'Cormorant Garamond'; font-size: 20px; color: var(--cream); margin-bottom: 6px; }
+  .booking-meta { display: flex; gap: 20px; flex-wrap: wrap; }
+  .booking-meta-item { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+  .booking-status { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .payment-drawer {
+    display: none; grid-column: 1 / -1;
+    border-top: 1px solid var(--border); margin-top: 16px; padding-top: 20px;
+  }
+  .payment-drawer.open { display: block; }
+  .payment-drawer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 32px; margin-bottom: 20px; }
+  .pd-label { font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .pd-val { font-size: 13px; color: var(--text); }
+  .pd-bill { background: rgba(255,255,255,.025); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .pd-bill-row { display: flex; justify-content: space-between; padding: 10px 16px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,.04); }
+  .pd-bill-row:last-child { border-bottom: none; }
+  .pd-bill-row .lbl { color: var(--muted); }
+  .pd-bill-row .val { color: var(--text); }
+  .pd-bill-row.total-row { background: rgba(201,168,76,.06); border-top: 1px solid rgba(201,168,76,.15); }
+  .pd-bill-row.total-row .lbl { color: var(--text); font-weight: 600; }
+  .pd-bill-row.total-row .val { font-family: 'Cormorant Garamond'; font-size: 20px; color: var(--gold); }
+  .btn-toggle-payment {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--muted); cursor: pointer; font-family: 'DM Sans';
+    font-size: 11px; font-weight: 500; letter-spacing: .06em;
+    padding: 6px 12px; text-transform: uppercase; transition: all .2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .btn-toggle-payment:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-toggle-payment .arrow { transition: transform .25s; display: inline-block; font-style: normal; }
+  .btn-toggle-payment.expanded .arrow { transform: rotate(180deg); }
+  .status-badge { font-size: 10px; font-weight: 600; letter-spacing: .1em; padding: 5px 12px; border-radius: 20px; text-transform: uppercase; }
+  .status-badge.active { background: rgba(39,174,96,.15); color: var(--green); border: 1px solid rgba(39,174,96,.3); }
+  .status-badge.completed { background: rgba(107,107,120,.15); color: var(--muted); border: 1px solid var(--border); }
+  .booking-price { font-family: 'Cormorant Garamond'; font-size: 22px; color: var(--gold-light); }
+  .btn-cancel {
+    background: none; border: 1px solid rgba(192,57,43,.3); border-radius: 6px;
+    color: rgba(192,57,43,.8); cursor: pointer; font-family: 'DM Sans';
+    font-size: 11px; font-weight: 500; letter-spacing: .06em;
+    padding: 6px 12px; text-transform: uppercase; transition: all .2s;
+  }
+  .btn-cancel:hover { background: rgba(192,57,43,.1); border-color: var(--red); color: var(--red); }
+
+  /* ── CONFIRMATION ── */
+  .confirm-overlay {
+    display: none; position: fixed; inset: 0; z-index: 250;
+    background: rgba(0,0,0,.85); backdrop-filter: blur(12px);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .confirm-overlay.open { display: flex; }
+  .confirm-sheet {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 24px; width: 100%; max-width: 580px;
+    max-height: 92vh; overflow-y: auto;
+    animation: sheetIn .4s cubic-bezier(.34,1.36,.64,1);
+  }
+  @keyframes sheetIn { from { opacity:0; transform:scale(.88) translateY(32px); } to { opacity:1; transform:none; } }
+  .confirm-top {
+    background: linear-gradient(135deg, #0e2a1a 0%, #0a1f14 100%);
+    border-bottom: 1px solid rgba(39,174,96,.2);
+    padding: 40px 36px 32px; text-align: center; border-radius: 24px 24px 0 0;
+  }
+  .confirm-ring {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(39,174,96,.15); border: 2px solid rgba(39,174,96,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 20px;
+    box-shadow: 0 0 0 12px rgba(39,174,96,.07), 0 0 40px rgba(39,174,96,.2);
+    animation: pulseRing 2s ease-in-out infinite;
+  }
+  @keyframes pulseRing {
+    0%,100% { box-shadow: 0 0 0 12px rgba(39,174,96,.07), 0 0 40px rgba(39,174,96,.2); }
+    50% { box-shadow: 0 0 0 20px rgba(39,174,96,.04), 0 0 60px rgba(39,174,96,.3); }
+  }
+  .confirm-heading { font-family:'Cormorant Garamond'; font-size:32px; font-weight:600; color:var(--cream); margin-bottom:8px; }
+  .confirm-subhead { color:#5dba85; font-size:14px; }
+  .confirm-badge-row { display:flex; justify-content:center; gap:10px; margin-top:20px; flex-wrap:wrap; }
+  .confirm-badge { background:rgba(39,174,96,.12); border:1px solid rgba(39,174,96,.25); border-radius:20px; color:#5dba85; font-size:11px; font-weight:600; letter-spacing:.1em; padding:5px 14px; text-transform:uppercase; }
+  .confirm-body { padding:28px 36px; }
+  .confirm-section { margin-bottom:24px; }
+  .confirm-section-title { font-size:10px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .confirm-car-row { display:flex; align-items:center; gap:16px; background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
+  .confirm-car-icon { font-size:42px; }
+  .confirm-car-name { font-family:'Cormorant Garamond'; font-size:22px; color:var(--cream); }
+  .confirm-car-sub { color:var(--muted); font-size:13px; margin-top:3px; }
+  .confirm-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .confirm-info-box { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .confirm-info-label { font-size:10px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
+  .confirm-info-val { font-size:14px; color:var(--text); font-weight:500; }
+  .bill-table { width:100%; border-collapse:collapse; }
+  .bill-row td { padding:10px 0; font-size:13px; border-bottom:1px solid rgba(255,255,255,.04); }
+  .bill-row td:last-child { text-align:right; color:var(--text); }
+  .bill-row td:first-child { color:var(--muted); }
+  .bill-total td { padding:14px 0 4px; font-size:15px; font-weight:500; border-bottom:none; }
+  .bill-total td:first-child { color:var(--text); }
+  .bill-total td:last-child { font-family:'Cormorant Garamond'; font-size:28px; color:var(--gold); text-align:right; }
+  .confirm-footer { padding:20px 36px 28px; border-top:1px solid var(--border); display:flex; gap:12px; }
+  .btn-view-bookings { flex:1; background:var(--gold); color:var(--black); border:none; border-radius:10px; cursor:pointer; font-family:'DM Sans'; font-size:13px; font-weight:600; letter-spacing:.06em; padding:14px; text-transform:uppercase; transition:all .2s; }
+  .btn-view-bookings:hover { background:var(--gold-light); }
+  .btn-back-fleet { flex:1; background:rgba(255,255,255,.05); color:var(--text); border:1px solid var(--border); border-radius:10px; cursor:pointer; font-family:'DM Sans'; font-size:13px; font-weight:500; letter-spacing:.04em; padding:14px; text-transform:uppercase; transition:all .2s; }
+  .btn-back-fleet:hover { background:rgba(255,255,255,.09); }
+
+  /* ── ABOUT PAGE ── */
+  .about-wrap { padding: 0 36px 60px; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+  .about-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 32px 28px; }
+  .about-icon { font-size: 36px; margin-bottom: 16px; }
+  .about-card-title { font-family: 'Cormorant Garamond'; font-size: 24px; color: var(--cream); margin-bottom: 10px; }
+  .about-card-text { color: var(--muted); font-size: 14px; line-height: 1.7; }
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px 24px; text-align: center; }
+  .stat-num { font-family: 'Cormorant Garamond'; font-size: 40px; font-weight: 600; color: var(--gold); }
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 6px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px; z-index: 300;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 22px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.5);
+    transform: translateY(20px); opacity: 0; pointer-events: none;
+    transition: all .35s cubic-bezier(.34,1.56,.64,1); max-width: 340px;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .toast-icon { font-size: 22px; }
+  .toast-title { font-weight: 500; color: var(--cream); margin-bottom: 2px; }
+  .toast-sub { color: var(--muted); font-size: 12px; }
+
+  /* Loading spinner inside btn */
+  .btn-spinner { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(0,0,0,.3); border-top-color: #000; animation: spin .6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Auth loading screen */
+  .auth-gate {
+    display: flex; position: fixed; inset: 0; z-index: 999;
+    background: var(--black); align-items: center; justify-content: center; flex-direction: column; gap: 20px;
+  }
+  .auth-gate .spinner { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--border); border-top-color: var(--gold); animation: spin .8s linear infinite; }
+  .auth-gate-text { font-size: 13px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    .user-name { display: none; }
+    .booking-strip { grid-template-columns: 1fr; margin: 16px; padding: 20px; }
+    .fleet-grid { grid-template-columns: 1fr; padding: 0 16px 40px; }
+    .section-header, .filter-bar, .bookings-wrap, .about-wrap { padding-left: 16px; padding-right: 16px; }
+    .hero { padding: 60px 16px 50px; }
+    .about-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+    .booking-card { grid-template-columns: auto 1fr; }
+    .booking-status { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Auth Gate (shown until Firebase confirms auth state) -->
+<div class="auth-gate" id="auth-gate">
+  <div class="spinner"></div>
+  <div class="auth-gate-text">Loading Velox Rentals…</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Velox<span> Rentals</span></div>
+  <div class="nav-center">
+    <button class="nav-tab active" onclick="showPage('fleet', this)">Fleet</button>
+    <button class="nav-tab" onclick="showPage('bookings', this)">My Bookings</button>
+    <button class="nav-tab" onclick="showPage('about', this)">About</button>
+  </div>
+  <div class="nav-user">
+    <div class="user-avatar" id="user-avatar">?</div>
+    <span class="user-name" id="user-name"></span>
+    <button class="btn-signout" onclick="signOut()">Sign Out</button>
+  </div>
+</nav>
+
+<!-- FLEET PAGE -->
+<div class="page active" id="page-fleet">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Premium Car Rental</div>
+      <h1 class="hero-title">Drive the <em>Extraordinary</em></h1>
+      <p class="hero-sub">Handpicked fleet of luxury, sports, and everyday vehicles. Effortless booking. Uncompromising quality.</p>
+    </div>
+  </div>
+  <div class="booking-strip">
+    <div class="field-group">
+      <label class="field-label">Pick-up Location</label>
+      <select class="field-input" id="pickup-location">
+        <option>Chennai, Tamil Nadu</option>
+        <option>Mumbai, Maharashtra</option>
+        <option>Delhi, NCR</option>
+        <option>Bangalore, Karnataka</option>
+        <option>Hyderabad, Telangana</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Pick-up Date</label>
+      <input type="date" class="field-input" id="pickup-date" />
+    </div>
+    <div class="field-group">
+      <label class="field-label">Return Date</label>
+      <input type="date" class="field-input" id="return-date" />
+    </div>
+    <button class="btn-search" onclick="applySearch()">Search Fleet</button>
+  </div>
+  <div class="section-header">
+    <h2 class="section-title">Available Vehicles</h2>
+    <span class="section-count" id="fleet-count"></span>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterCars('all', this)">All</button>
+    <button class="filter-btn" onclick="filterCars('sedan', this)">Sedan</button>
+    <button class="filter-btn" onclick="filterCars('suv', this)">SUV</button>
+    <button class="filter-btn" onclick="filterCars('sports', this)">Sports</button>
+    <button class="filter-btn" onclick="filterCars('luxury', this)">Luxury</button>
+    <button class="filter-btn" onclick="filterCars('eco', this)">Eco</button>
+  </div>
+  <div class="fleet-grid" id="fleet-grid"></div>
+</div>
+
+<!-- BOOKINGS PAGE -->
+<div class="page" id="page-bookings">
+  <div class="hero" style="padding: 60px 36px 50px;">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Dashboard</div>
+      <h1 class="hero-title">Your <em>Bookings</em></h1>
+    </div>
+  </div>
+  <div class="bookings-wrap" id="bookings-list"></div>
+</div>
+
+<!-- ABOUT PAGE -->
+<div class="page" id="page-about">
+  <div class="hero" style="padding: 60px 36px 50px;">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Our Story</div>
+      <h1 class="hero-title">About <em>Velox</em></h1>
+      <p class="hero-sub">Founded in 2018, Velox Rentals has set the benchmark for premium car hire across India.</p>
+    </div>
+  </div>
+  <div class="about-wrap">
+    <div class="about-grid">
+      <div class="about-card"><div class="about-icon">🏆</div><div class="about-card-title">Award-Winning Service</div><div class="about-card-text">Recognised as India's leading luxury car rental for five consecutive years.</div></div>
+      <div class="about-card"><div class="about-icon">🌍</div><div class="about-card-title">Pan-India Network</div><div class="about-card-text">Operating across 15+ cities with 24/7 roadside assistance.</div></div>
+      <div class="about-card"><div class="about-icon">🔒</div><div class="about-card-title">Fully Insured Fleet</div><div class="about-card-text">All vehicles come with comprehensive insurance coverage.</div></div>
+      <div class="about-card"><div class="about-icon">🌿</div><div class="about-card-title">Green Commitment</div><div class="about-card-text">Over 20% of our fleet is now electric or hybrid. Carbon neutral by 2030.</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-num">250+</div><div class="stat-label">Vehicles</div></div>
+      <div class="stat-box"><div class="stat-num">15</div><div class="stat-label">Cities</div></div>
+      <div class="stat-box"><div class="stat-num">50K+</div><div class="stat-label">Customers</div></div>
+      <div class="stat-box"><div class="stat-num">4.9★</div><div class="stat-label">Avg Rating</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- RENTAL MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Reserve Vehicle</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-car-summary" id="modal-car-summary"></div>
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label">Full Name</label>
+          <input type="text" class="field-input" id="renter-name" placeholder="Your full name" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Phone</label>
+          <input type="tel" class="field-input" id="renter-phone" placeholder="+91 00000 00000" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label">Pick-up Date</label>
+          <input type="date" class="field-input" id="modal-pickup" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Return Date</label>
+          <input type="date" class="field-input" id="modal-return" />
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="field-group">
+          <label class="field-label">Driver's License No.</label>
+          <input type="text" class="field-input" id="license-no" placeholder="DL-XXXXXXXXXXXXXX" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="price-breakdown" id="price-breakdown"></div>
+      <button class="btn-confirm" id="btn-confirm" onclick="confirmBooking()">Confirm Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING CONFIRMATION -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-sheet">
+    <div class="confirm-top">
+      <div class="confirm-ring">✓</div>
+      <div class="confirm-heading">Booking Confirmed!</div>
+      <div class="confirm-subhead">Your vehicle has been successfully reserved</div>
+      <div class="confirm-badge-row">
+        <span class="confirm-badge" id="cb-id"></span>
+        <span class="confirm-badge">● Active</span>
+      </div>
+    </div>
+    <div class="confirm-body">
+      <div class="confirm-section">
+        <div class="confirm-section-title">Vehicle</div>
+        <div class="confirm-car-row">
+          <div class="confirm-car-icon" id="cb-icon"></div>
+          <div><div class="confirm-car-name" id="cb-car-name"></div><div class="confirm-car-sub" id="cb-car-sub"></div></div>
+        </div>
+      </div>
+      <div class="confirm-section">
+        <div class="confirm-section-title">Booking Details</div>
+        <div class="confirm-info-grid">
+          <div class="confirm-info-box"><div class="confirm-info-label">Renter</div><div class="confirm-info-val" id="cb-renter"></div></div>
+          <div class="confirm-info-box"><div class="confirm-info-label">Phone</div><div class="confirm-info-val" id="cb-phone"></div></div>
+          <div class="confirm-info-box"><div class="confirm-info-label">Pick-up</div><div class="confirm-info-val" id="cb-pickup"></div></div>
+          <div class="confirm-info-box"><div class="confirm-info-label">Return</div><div class="confirm-info-val" id="cb-return"></div></div>
+          <div class="confirm-info-box"><div class="confirm-info-label">Duration</div><div class="confirm-info-val" id="cb-days"></div></div>
+          <div class="confirm-info-box"><div class="confirm-info-label">License No.</div><div class="confirm-info-val" id="cb-license"></div></div>
+        </div>
+      </div>
+      <div class="confirm-section">
+        <div class="confirm-section-title">Bill Summary</div>
+        <table class="bill-table" id="cb-bill"></table>
+      </div>
+    </div>
+    <div class="confirm-footer">
+      <button class="btn-view-bookings" onclick="goToBookings()">View My Bookings</button>
+      <button class="btn-back-fleet" onclick="closeConfirm()">Back to Fleet</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toast-icon"></div>
+  <div class="toast-msg">
+    <div class="toast-title" id="toast-title"></div>
+    <div class="toast-sub" id="toast-sub"></div>
+  </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="firebase-config.js"></script>
+<script type="module">
+import { initializeApp }       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut as fbSignOut }
+                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, getDocs, doc, updateDoc,
+  query, where, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ─── CAR DATA ─────────────────────────────────────────────────────────────
+const CARS = [
+  { id:1, brand:'Toyota',      name:'Camry Hybrid',  icon:'🚗',  category:'sedan',  badge:'Eco',      badgeClass:'eco',     seats:5, fuel:'Hybrid',   transmission:'Auto', price:2800, desc:'Fuel-efficient mid-size sedan' },
+  { id:2, brand:'BMW',         name:'3 Series',       icon:'🏎️', category:'sedan',  badge:'Popular',  badgeClass:'',        seats:5, fuel:'Petrol',   transmission:'Auto', price:5500, desc:'Executive driving dynamics' },
+  { id:3, brand:'Mercedes',    name:'GLE 450',        icon:'🚙',  category:'suv',    badge:'Premium',  badgeClass:'premium', seats:7, fuel:'Petrol',   transmission:'Auto', price:9200, desc:'Luxury full-size SUV' },
+  { id:4, brand:'Porsche',     name:'911 Carrera',    icon:'🏎️', category:'sports', badge:'Sports',   badgeClass:'premium', seats:2, fuel:'Petrol',   transmission:'PDK',  price:14500,desc:'Iconic sports performance' },
+  { id:5, brand:'Tesla',       name:'Model 3',        icon:'⚡',  category:'eco',    badge:'Electric', badgeClass:'eco',     seats:5, fuel:'Electric', transmission:'Auto', price:4200, desc:'Zero-emission future driving' },
+  { id:6, brand:'Range Rover', name:'Sport HSE',      icon:'🚙',  category:'suv',    badge:'Luxury',   badgeClass:'premium', seats:5, fuel:'Diesel',   transmission:'Auto', price:11000,desc:'Off-road luxury redefined' },
+  { id:7, brand:'Lamborghini', name:'Huracán',        icon:'🚀',  category:'sports', badge:'Exotic',   badgeClass:'premium', seats:2, fuel:'Petrol',   transmission:'DCT',  price:28000,desc:'Italian supercar thrills' },
+  { id:8, brand:'Hyundai',     name:'Creta',          icon:'🚗',  category:'suv',    badge:'Value',    badgeClass:'',        seats:5, fuel:'Diesel',   transmission:'Auto', price:2200, desc:'Compact SUV for every journey' },
+  { id:9, brand:'Rolls-Royce', name:'Ghost',          icon:'👑',  category:'luxury', badge:'Ultra Lux',badgeClass:'premium', seats:4, fuel:'Petrol',   transmission:'Auto', price:45000,desc:'The pinnacle of luxury motoring' },
+  { id:10,brand:'Honda',       name:'City e:HEV',     icon:'🌿',  category:'eco',    badge:'Eco',      badgeClass:'eco',     seats:5, fuel:'Hybrid',   transmission:'CVT',  price:3100, desc:'Smart hybrid city sedan' },
+];
+
+let currentUser = null;
+let bookings    = [];
+let activeFilter = 'all';
+let selectedCar  = null;
+
+// ─── AUTH GATE ────────────────────────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = 'index.html';
+    return;
+  }
+  currentUser = user;
+
+  // Update nav user UI
+  const nameEl   = document.getElementById('user-name');
+  const avatarEl = document.getElementById('user-avatar');
+  nameEl.textContent = user.displayName || user.email.split('@')[0];
+  if (user.photoURL) {
+    avatarEl.innerHTML = `<img src="${user.photoURL}" alt="avatar"/>`;
+  } else {
+    avatarEl.textContent = (user.displayName || user.email)[0].toUpperCase();
+  }
+
+  // Init app
+  document.getElementById('auth-gate').style.display = 'none';
+  const today    = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  document.getElementById('pickup-date').value = today;
+  document.getElementById('return-date').value  = tomorrow;
+  renderFleet();
+
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+});
+
+window.signOut = async function() {
+  await fbSignOut(auth);
+  window.location.href = 'index.html';
+};
+
+// ─── PAGE NAV ─────────────────────────────────────────────────────────────
+window.showPage = function(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'bookings') loadAndRenderBookings();
+};
+
+// ─── FLEET ────────────────────────────────────────────────────────────────
+window.filterCars = function(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFleet();
+};
+
+window.applySearch = function() {
+  renderFleet();
+  showToast('🔍', 'Fleet Updated', 'Showing available vehicles for your dates');
+};
+
+function renderFleet() {
+  const grid     = document.getElementById('fleet-grid');
+  const filtered = activeFilter === 'all' ? CARS : CARS.filter(c => c.category === activeFilter);
+  document.getElementById('fleet-count').textContent = filtered.length + ' car' + (filtered.length !== 1 ? 's' : '');
+  grid.innerHTML = filtered.map(car => `
+    <div class="car-card" onclick="openModal(${car.id})">
+      ${car.badge ? `<div class="car-badge ${car.badgeClass}">${car.badge}</div>` : ''}
+      <div class="car-img-wrap"><div class="car-icon">${car.icon}</div></div>
+      <div class="car-info">
+        <div class="car-brand">${car.brand}</div>
+        <div class="car-name">${car.name}</div>
+        <div class="car-specs">
+          <div class="car-spec">👥 ${car.seats} Seats</div>
+          <div class="car-spec">⚙️ ${car.transmission}</div>
+          <div class="car-spec">⛽ ${car.fuel}</div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">₹${car.price.toLocaleString()}<span>/day</span></div>
+          <button class="btn-rent">Book Now</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────
+window.openModal = function(carId) {
+  selectedCar = CARS.find(c => c.id === carId);
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-car-summary').innerHTML = `
+    <div class="modal-car-icon">${selectedCar.icon}</div>
+    <div>
+      <div class="modal-car-name">${selectedCar.brand} ${selectedCar.name}</div>
+      <div class="modal-car-sub">${selectedCar.desc} · ₹${selectedCar.price.toLocaleString()}/day</div>
+    </div>`;
+
+  // Pre-fill from search strip & autofill name/phone from Firebase user
+  const pu = document.getElementById('pickup-date').value;
+  const rt = document.getElementById('return-date').value;
+  if (pu) document.getElementById('modal-pickup').value = pu;
+  if (rt) document.getElementById('modal-return').value = rt;
+  if (currentUser?.displayName) document.getElementById('renter-name').value = currentUser.displayName;
+  if (currentUser?.phoneNumber) document.getElementById('renter-phone').value = currentUser.phoneNumber;
+
+  updatePriceBreakdown();
+  ['modal-pickup','modal-return'].forEach(id => {
+    document.getElementById(id).onchange = updatePriceBreakdown;
+  });
+};
+
+window.closeModal = function() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  selectedCar = null;
+  ['renter-name','renter-phone','license-no','modal-pickup','modal-return'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+};
+
+function getDays() {
+  const pu = document.getElementById('modal-pickup').value;
+  const rt = document.getElementById('modal-return').value;
+  if (!pu || !rt) return 1;
+  const d = Math.ceil((new Date(rt) - new Date(pu)) / 86400000);
+  return d > 0 ? d : 1;
+}
+
+function updatePriceBreakdown() {
+  if (!selectedCar) return;
+  const days = getDays();
+  const base = selectedCar.price * days;
+  const tax  = Math.round(base * 0.18);
+  const ins  = 500 * days;
+  document.getElementById('price-breakdown').innerHTML = `
+    <div class="price-row"><span>₹${selectedCar.price.toLocaleString()} × ${days} day${days>1?'s':''}</span><span class="val">₹${base.toLocaleString()}</span></div>
+    <div class="price-row"><span>Insurance</span><span class="val">₹${ins.toLocaleString()}</span></div>
+    <div class="price-row"><span>GST (18%)</span><span class="val">₹${tax.toLocaleString()}</span></div>
+    <div class="price-row total"><span>Total</span><span class="val">₹${(base+tax+ins).toLocaleString()}</span></div>`;
+}
+
+// ─── CONFIRM BOOKING → SAVE TO FIRESTORE ─────────────────────────────────
+window.confirmBooking = async function() {
+  const name    = document.getElementById('renter-name').value.trim();
+  const phone   = document.getElementById('renter-phone').value.trim();
+  const license = document.getElementById('license-no').value.trim();
+  const pu      = document.getElementById('modal-pickup').value;
+  const rt      = document.getElementById('modal-return').value;
+
+  if (!name || !phone || !license || !pu || !rt) {
+    showToast('⚠️', 'Missing Details', 'Please fill in all fields'); return;
+  }
+  if (new Date(rt) <= new Date(pu)) {
+    showToast('⚠️', 'Invalid Dates', 'Return date must be after pick-up'); return;
+  }
+
+  const btn = document.getElementById('btn-confirm');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="btn-spinner"></span> Saving…';
+
+  const days      = getDays();
+  const base      = selectedCar.price * days;
+  const insurance = 500 * days;
+  const tax       = Math.round(base * 0.18);
+  const total     = base + insurance + tax;
+  const bookingId = 'VX' + Date.now().toString().slice(-6);
+
+  const bookingData = {
+    id: bookingId, userId: currentUser.uid,
+    carId: selectedCar.id, icon: selectedCar.icon,
+    name: selectedCar.brand + ' ' + selectedCar.name,
+    fuel: selectedCar.fuel, transmission: selectedCar.transmission,
+    renter: name, phone, license, pickup: pu, returnDate: rt,
+    days, base, insurance, tax, total, status: 'active',
+    createdAt: serverTimestamp()
+  };
+
+  try {
+    await addDoc(collection(db, 'bookings'), bookingData);
+    const receipt = { ...bookingData, brand: selectedCar.brand, carName: selectedCar.name };
+    closeModal();
+    showConfirmation(receipt);
+    showToast('✅', 'Booking Saved', 'Your booking is saved to the cloud!');
+  } catch (err) {
+    console.error(err);
+    showToast('❌', 'Save Failed', 'Could not save to Firebase. Check your config.');
+    btn.disabled = false;
+    btn.textContent = 'Confirm Booking';
+  }
+};
+
+// ─── LOAD BOOKINGS FROM FIRESTORE ─────────────────────────────────────────
+async function loadAndRenderBookings() {
+  const el = document.getElementById('bookings-list');
+  el.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-title">Loading…</div></div>';
+  try {
+    const q = query(
+      collection(db, 'bookings'),
+      where('userId', '==', currentUser.uid),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    bookings = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
+    renderBookings();
+  } catch (err) {
+    console.error(err);
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Could not load bookings</div><div class="empty-sub">Check Firebase config or Firestore rules</div></div>';
+  }
+}
+
+function renderBookings() {
+  const el = document.getElementById('bookings-list');
+  if (!bookings.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🚗</div><div class="empty-title">No Bookings Yet</div><div class="empty-sub">Head to the Fleet tab and reserve your first vehicle</div></div>`;
+    return;
+  }
+  el.innerHTML = bookings.map(b => `
+    <div class="booking-card">
+      <div class="booking-icon">${b.icon}</div>
+      <div>
+        <div class="booking-name">${b.name}</div>
+        <div class="booking-meta">
+          <span class="booking-meta-item">📋 ${b.id}</span>
+          <span class="booking-meta-item">👤 ${b.renter}</span>
+          <span class="booking-meta-item">📅 ${formatDate(b.pickup)} → ${formatDate(b.returnDate)}</span>
+          <span class="booking-meta-item">⏱️ ${b.days} day${b.days>1?'s':''}</span>
+        </div>
+      </div>
+      <div class="booking-status">
+        <span class="status-badge ${b.status}">${b.status}</span>
+        <div class="booking-price">₹${b.total.toLocaleString()}</div>
+        <button class="btn-toggle-payment" id="btn-${b.id}" onclick="togglePayment('${b.id}')">
+          Payment Details <em class="arrow">▾</em>
+        </button>
+        ${b.status === 'active' ? `<button class="btn-cancel" onclick="cancelBooking('${b.docId}','${b.id}')">Cancel</button>` : ''}
+      </div>
+      <div class="payment-drawer" id="drawer-${b.id}">
+        <div class="payment-drawer-grid">
+          <div class="pd-item"><div class="pd-label">Renter</div><div class="pd-val">${b.renter}</div></div>
+          <div class="pd-item"><div class="pd-label">Phone</div><div class="pd-val">${b.phone}</div></div>
+          <div class="pd-item"><div class="pd-label">License No.</div><div class="pd-val">${b.license}</div></div>
+          <div class="pd-item"><div class="pd-label">Vehicle</div><div class="pd-val">${b.name} · ${b.fuel}</div></div>
+          <div class="pd-item"><div class="pd-label">Pick-up</div><div class="pd-val">${formatDate(b.pickup)}</div></div>
+          <div class="pd-item"><div class="pd-label">Return</div><div class="pd-val">${formatDate(b.returnDate)}</div></div>
+        </div>
+        <div class="pd-bill">
+          <div class="pd-bill-row"><span class="lbl">Base Rental (${b.days} day${b.days>1?'s':''})</span><span class="val">₹${b.base.toLocaleString()}</span></div>
+          <div class="pd-bill-row"><span class="lbl">Insurance</span><span class="val">₹${b.insurance.toLocaleString()}</span></div>
+          <div class="pd-bill-row"><span class="lbl">GST (18%)</span><span class="val">₹${b.tax.toLocaleString()}</span></div>
+          <div class="pd-bill-row total-row"><span class="lbl">Total Paid</span><span class="val">₹${b.total.toLocaleString()}</span></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+window.cancelBooking = async function(docId, bookingId) {
+  try {
+    await updateDoc(doc(db, 'bookings', docId), { status: 'completed' });
+    const b = bookings.find(x => x.id === bookingId);
+    if (b) b.status = 'completed';
+    renderBookings();
+    showToast('✅', 'Booking Cancelled', 'Your reservation has been cancelled');
+  } catch (e) {
+    showToast('❌', 'Error', 'Could not cancel booking');
+  }
+};
+
+window.togglePayment = function(id) {
+  const drawer = document.getElementById('drawer-' + id);
+  const btn    = document.getElementById('btn-' + id);
+  const isOpen = drawer.classList.contains('open');
+  drawer.classList.toggle('open', !isOpen);
+  btn.classList.toggle('expanded', !isOpen);
+};
+
+// ─── CONFIRMATION SHEET ───────────────────────────────────────────────────
+function showConfirmation(r) {
+  document.getElementById('cb-id').textContent      = r.id;
+  document.getElementById('cb-icon').textContent    = r.icon;
+  document.getElementById('cb-car-name').textContent = r.brand + ' ' + r.carName;
+  document.getElementById('cb-car-sub').textContent  = r.fuel + ' · ' + r.transmission;
+  document.getElementById('cb-renter').textContent   = r.renter;
+  document.getElementById('cb-phone').textContent    = r.phone;
+  document.getElementById('cb-pickup').textContent   = formatDate(r.pickup);
+  document.getElementById('cb-return').textContent   = formatDate(r.returnDate);
+  document.getElementById('cb-days').textContent     = r.days + ' day' + (r.days > 1 ? 's' : '');
+  document.getElementById('cb-license').textContent  = r.license;
+  document.getElementById('cb-bill').innerHTML = `
+    <tr class="bill-row"><td>Base Rental (${r.days} day${r.days>1?'s':''})</td><td>₹${r.base.toLocaleString()}</td></tr>
+    <tr class="bill-row"><td>Insurance Coverage</td><td>₹${r.insurance.toLocaleString()}</td></tr>
+    <tr class="bill-row"><td>GST (18%)</td><td>₹${r.tax.toLocaleString()}</td></tr>
+    <tr class="bill-total"><td>Total Payable</td><td>₹${r.total.toLocaleString()}</td></tr>`;
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+
+window.closeConfirm = function() {
+  document.getElementById('confirm-overlay').classList.remove('open');
+};
+
+window.goToBookings = function() {
+  closeConfirm();
+  const tab = document.querySelectorAll('.nav-tab')[1];
+  showPage('bookings', tab);
+};
+
+// ─── UTILS ────────────────────────────────────────────────────────────────
+function formatDate(str) {
+  if (!str) return '—';
+  return new Date(str).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+
+window.showToast = function(icon, title, sub) {
+  document.getElementById('toast-icon').textContent  = icon;
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-sub').textContent   = sub;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+};
+</script>
+</body>
+</html>
