@@ -6,12 +6,13 @@
 // ═══════════════════════════════════════════════════════════════
 
 const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDxPLNj-4c0DuHnJDxj2V9KRQtNVW1DKn0",
+  authDomain: "cars-38576.firebaseapp.com",
+  projectId: "cars-38576",
+  storageBucket: "cars-38576.firebasestorage.app",
+  messagingSenderId: "513751416718",
+  appId: "1:513751416718:web:0e5f94b3b087b0da966edf",
+  measurementId: "G-3DXMXK495Q"
 };
 
 // ─── HOW TO SET UP GOOGLE SIGN-IN ───────────────────────────────
